@@ -125,7 +125,7 @@ SM4relind:
 
 Possible entities:
 ```yaml
-opto_1: -> opto_4:  (type: sensor)
+opto_1: -> opto_4:  (type: binary_sensor)
 relay_1: -> relay_4:  (type: switch)
 ```
 

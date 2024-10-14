@@ -1,5 +1,5 @@
 DEFAULT_ICONS = {
-        "on": "mdi:numeric",
+        "on": "mdi:numeric-1",
         "off": "mdi:numeric-0",
 }
 
@@ -9,7 +9,7 @@ import types
 import inspect
 from inspect import signature
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.entity import generate_entity_id
 from homeassistant.helpers.event import async_track_time_interval
 from datetime import timedelta
@@ -19,7 +19,7 @@ from . import (
         CONF_UPDATE_INTERVAL,
         SM_MAP, SM_API
 )
-SM_MAP = SM_MAP["sensor"]
+SM_MAP = SM_MAP["binary_sensor"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,19 +27,19 @@ async def async_setup_platform(hass, config, add_devices, discovery_info=None):
     # We want this platform to be setup via discovery
     if discovery_info == None:
         return
-    add_devices([Sensor(
+    add_devices([BinarySensor(
         hass=hass,
-		name=discovery_info.get(CONF_NAME),
-        stack=discovery_info.get(CONF_STACK),
+		name=discovery_info.get(CONF_NAME, ""),
+        stack=discovery_info.get(CONF_STACK, 0),
         type=discovery_info.get(CONF_TYPE),
         chan=discovery_info.get(CONF_CHAN),
         update_interval=discovery_info.get(CONF_UPDATE_INTERVAL) or 30,
 	)])
 
-class Sensor(SensorEntity):
-    def __init__(self, hass, name, stack, type, chan, update_interval):
+class BinarySensor(BinarySensorEntity):
+    def __init__(self, name, stack, type, chan, hass, update_interval):
         generated_name = DOMAIN + str(stack) + "_" + type + "_" + str(chan)
-        self._unique_id = generate_entity_id("sensor.{}", generated_name, hass=hass)
+        self._unique_id = generate_entity_id("binary_sensor.{}", generated_name, hass=hass)
         self._name = name or generated_name
         self._stack = int(stack)
         self._type = type
@@ -61,7 +61,6 @@ class Sensor(SensorEntity):
         if inspect.isclass(self._SM):
             self._SM = self._SM(self._stack)
             self._SM_get = getattr(self._SM, com["get"])
-            ### Make API compatible if channel is not used (_)
             if len(signature(self._SM_get).parameters) == 0:
                 def _aux2_SM_get(self, _):
                     return getattr(self, com["get"])()
@@ -120,5 +119,5 @@ class Sensor(SensorEntity):
         return self._uom
 
     @property
-    def native_value(self):
+    def is_on(self):
         return self._value

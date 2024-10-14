@@ -6,7 +6,7 @@ API = lib4relind
 DOMAIN = "SM4relind"
 NAME_PREFIX = "sm4ri"
 SM_MAP = {
-    "sensor":  {
+    "binary_sensor":  {
         "opto": {
                 "chan_no": 4,
                 "uom": "",
