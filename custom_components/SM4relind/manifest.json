@@ -9,5 +9,5 @@
 	"after_dependencies": [],
 	"codeownders": ["3lv"],
 	"config_flow": false,
-	"requirements": ["SM4relind>=1.0.0"]
+	"requirements": ["SM4relind>=1.0.2"]
 }
